@@ -1,52 +1,42 @@
+#include <bitset>
 #include <iostream>
 #include <string>
+#include <vector>
 
 using std::cout;
 using std::endl;
 
-class A {
-public:
-  A() { cout << "A()" << endl; }
-  A(const A &a) { cout << "A(const A&)" << endl; }
-  A(A &&) { cout << "A(A&&)" << endl; }
-  ~A() { cout << "~A()" << endl; }
+struct A {
+  A() { cout << "Constructing an A" << endl; }
+  A(const A &other) { cout << "Copy" << endl; }
+  A(A &&other) noexcept { cout << "move" << endl; }
+  ~A() { cout << "Cleaning up" << endl; }
+  int member;
 };
 
-class B {
-public:
-  B() { cout << "B()" << endl; }
-  B(A a) : m_a(a) { cout << "B(A)" << endl; }
-  B(A &&a) : m_a(a) { cout << "B(A&&)" << endl; }
-  //  B(B &&) { cout << "B(&&)"; }
+void foo(A a) { cout << "foo(A)" << endl; }
+void fum(A &&a);
+void fum(A &a);
+void fie(A &&a) {
+  cout << "fie(A&&)" << endl;
+  fum(a);
+}
 
-  ~B() { cout << "~B()" << endl; }
-  A m_a;
-};
-
-class C {
-public:
-  C() { cout << "C()" << endl; }
-
-  //  C(A &&a) : m_a((cout << "C{}" << endl, a)) { cout << "C(A&&)" << endl; }
-  C(A &&a) : m_a((cout << "C{}" << endl, std::move(a))) {
-    cout << "C(A&&)" << endl;
-  }
-
-  ~C() { cout << "~C()" << endl; }
-  A m_a;
-};
+void fum(A &&a) { cout << "fum(A&&)" << endl; a.member = 666; }
+void fum(A &a) { cout << "fum(A&)" << endl; a.member = 666; }
 
 int main() {
+  cout << "With copy semantics:" << endl;
+  {
+    A a;
+    foo(a);
+  }
+  cout << "With move semantics:" << endl;
+  fie(A());
 
-  cout << "Move it !" << endl;
-  {
-    cout << "-- B --" << endl;
-    A a;
-    B b1(a);
-  }
-  {
-    cout << "-- C --" << endl;
-    A a;
-    C c(std::move(a));
-  }
+  cout << "With move semantics again:" << endl;
+  A a;
+  a.member = 42;
+  fie(std::move(a));
+  cout << "member:" << a.member << endl;
 }
