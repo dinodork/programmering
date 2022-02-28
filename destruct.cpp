@@ -9,7 +9,6 @@ struct A {
   ~A() { cout << "A DTOR" << endl; }
 };
 
-
 struct Base {
   Base(A *a) {}
 };

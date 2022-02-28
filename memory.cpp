@@ -9,10 +9,8 @@ public:
   Foo() { cout << "Foo::Foo()" << endl; }
 };
 
-
 namespace std {
-template<class...Args>
-unique_ptr<Foo> std::make_unique<Foo>(Args&&...);
+template <class... Args> unique_ptr<Foo> std::make_unique<Foo>(Args &&...);
 };
 
 int main() {

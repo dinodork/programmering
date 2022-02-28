@@ -1,5 +1,5 @@
-#include <iostream>
 #include <functional>
+#include <iostream>
 #include <string>
 
 using std::cout;
@@ -22,11 +22,10 @@ int main() {
   k1.i = 42;
   std::string apa = "hej hopp";
   cout << "Kellermeister " << k1.i << endl;
-//  cout << "Kellermeister " << *k1.s << endl;
+  //  cout << "Kellermeister " << *k1.s << endl;
   k1.s = &apa;
   cout << "Kellermeister " << k1.i << endl;
   cout << "Kellermeister " << *k1.s << endl;
   cout << "Stor som " << sizeof(kalle) << endl;
   cout << "Stor som " << sizeof(k1) << endl;
-
 }

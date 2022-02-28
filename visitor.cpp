@@ -4,59 +4,52 @@ using std::cout;
 using std::endl;
 
 class Plus;
-class Number;  
-class IVisitor { 
+class Number;
+class IVisitor {
 public:
-  virtual void visit( Plus &plus ) = 0;
-  virtual void visit( Number &cn ) = 0;
+  virtual void visit(Plus &plus) = 0;
+  virtual void visit(Number &cn) = 0;
 };
 
-class Expression { 
+class Expression {
 public:
-  virtual void accept( IVisitor &v ) = 0;
-  virtual void acceptAndPrint( IVisitor &v ) = 0;
+  virtual void accept(IVisitor &v) = 0;
+  virtual void acceptAndPrint(IVisitor &v) = 0;
 };
 
-class Plus : public Expression { 
+class Plus : public Expression {
 public:
-  Plus(Expression & lhs_arg, Expression & rhs_arg)
-    : lhs(lhs_arg),
-      rhs(rhs_arg)
-  {}
+  Plus(Expression &lhs_arg, Expression &rhs_arg) : lhs(lhs_arg), rhs(rhs_arg) {}
 
-  virtual void accept( IVisitor &v ) {
+  virtual void accept(IVisitor &v) {
     lhs.accept(v);
     v.visit(*this);
     rhs.accept(v);
   }
 
-  void acceptAndPrint( IVisitor &v ) override {
+  void acceptAndPrint(IVisitor &v) override {
     lhs.accept(v);
     cout << " * ";
     rhs.accept(v);
   }
 
-  Expression & lhs, & rhs;
+  Expression &lhs, &rhs;
 };
 
-class Number : public Expression { 
+class Number : public Expression {
 public:
   int value;
 
   Number(int v) : value(v) {}
-  virtual void accept( IVisitor      &v ) {
-    v.visit(*this);
-  }
+  virtual void accept(IVisitor &v) { v.visit(*this); }
 
-  void acceptAndPrint( IVisitor &v ) override {
-    cout << value;
-  }
+  void acceptAndPrint(IVisitor &v) override { cout << value; }
 };
 
-class PrintingVisitor : public IVisitor { 
+class PrintingVisitor : public IVisitor {
 public:
-  void visit( Plus &plus ) { cout << " + "; }
-  void visit( Number &n ) { cout << n.value; }
+  void visit(Plus &plus) { cout << " + "; }
+  void visit(Number &n) { cout << n.value; }
 };
 
 int main() {

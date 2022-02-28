@@ -1,5 +1,5 @@
-#include <iostream>
 #include <initializer_list>
+#include <iostream>
 
 using std::cout;
 using std::endl;
@@ -18,7 +18,7 @@ public:
 int main() {
 
   cout << "Hello, world!" << endl;
-  foo(1,2);
-  foo({1},{2});
-  A a = {1,2};
+  foo(1, 2);
+  foo({1}, {2});
+  A a = {1, 2};
 }

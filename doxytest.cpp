@@ -1,10 +1,9 @@
-#include <iostream>
 #include <bitset>
+#include <iostream>
 
+using std::bitset;
 using std::cout;
 using std::endl;
-using std::bitset;
-
 
 /**
    Demonstration of Markdown
@@ -25,22 +24,22 @@ class Base {
 public:
   int m_int;
 
-/**
-  @defgroup AGroupOfMemberFunctions A group of member functions
-  @{
-*/
+  /**
+    @defgroup AGroupOfMemberFunctions A group of member functions
+    @{
+  */
 
   /**
     This member function is in a group.
     @param[in] a The a parameter.
     @param[out] a The b parameter.
   */
-  void foo(int * a, int * b) {}
+  void foo(int *a, int *b) {}
 
   /// This member function is in a group.
   void fie() {}
 
-/// @}
+  /// @}
 
   /// This member function is not in the group.
   void fum() {}
@@ -49,41 +48,41 @@ public:
   virtual void myVirtualFun() {}
 };
 
-
 class Derived : public Base {
 public:
   Derived(int myint) : m_myint(myint) {}
 
-  Derived& operator =(const Derived& other) {
+  Derived &operator=(const Derived &other) {
     m_int = other.m_int;
     m_myint = other.m_myint;
   };
 
   void print() { cout << m_myint << ", " << m_int << endl; }
+
 private:
   int m_myint;
 };
-
 
 class DerivedAsWell : public Base {
 public:
   Derived(int myint) : m_myint(myint) {}
 
-  Derived& operator =(const Derived& other) {
+  Derived &operator=(const Derived &other) {
     m_int = other.m_int;
     m_myint = other.m_myint;
   };
 
   void print() { cout << m_myint << ", " << m_int << endl; }
+
 private:
   int m_myint;
 };
 
 struct Bits {
-  unsigned char onebit:1;
-  unsigned char twobits:2;
-  unsigned char fourbits:4;
-  unsigned char padding:1;
+  unsigned char onebit : 1;
+  unsigned char twobits : 2;
+  unsigned char fourbits : 4;
+  unsigned char padding : 1;
   unsigned int kalle_johansson;
 }
 
@@ -103,6 +102,6 @@ int main() {
   pd2->print();
   d2.print();
 
-  Bits bits = { 1, 2, 8, 666 };
-  cout << "Sajsen: " << sizeof( bits ) << endl;
+  Bits bits = {1, 2, 8, 666};
+  cout << "Sajsen: " << sizeof(bits) << endl;
 }

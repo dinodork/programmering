@@ -11,17 +11,11 @@ public:
   ~A() { cout << "~A()" << endl; }
 };
 
-void foocopy(A a) {
-  cout << "foocopy()" << endl;
-}
+void foocopy(A a) { cout << "foocopy()" << endl; }
 
-void fooconstref(const A &a) {
-  cout << "fooconstref()" << endl;
-}
+void fooconstref(const A &a) { cout << "fooconstref()" << endl; }
 
-void foomove(A &&a) {
-  cout << "foomove()" << endl;
-}
+void foomove(A &&a) { cout << "foomove()" << endl; }
 
 int main() {
 

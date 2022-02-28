@@ -1,7 +1,7 @@
 #include <iostream>
-#include <vector>
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
+#include <vector>
 
 #include <memory>
 
@@ -12,7 +12,8 @@ class Select_lex_unit;
 class Select_lex_unit_owner {
 public:
   void set_select_lex_unit(Select_lex_unit *new_slu);
-  Select_lex_unit *select_lex_unit() const { return m_slu;  }
+  Select_lex_unit *select_lex_unit() const { return m_slu; }
+
 private:
   Select_lex_unit *m_slu{nullptr};
 };
@@ -22,6 +23,7 @@ class Select_lex_owner {
 public:
   void set_select_lex(Select_lex *new_sl);
   Select_lex *select_lex() const { return m_sl; }
+
 private:
   Select_lex *m_sl{nullptr};
 };
@@ -38,6 +40,7 @@ public:
       cout << sl->m_name << ' ';
     cout << "]";
   }
+
 private:
   std::string m_name;
   Select_lex_owner *prev{nullptr};
@@ -58,7 +61,8 @@ public:
     }
     cout << "}";
   }
-private:  
+
+private:
   std::string m_name;
   Select_lex_unit_owner *prev{nullptr};
 };
@@ -74,27 +78,30 @@ void Select_lex_unit_owner::set_select_lex_unit(Select_lex_unit *new_slu) {
 }
 
 void Select_lex::unlink() {
-  if (prev != nullptr) prev->set_select_lex(next());
-  if (next() != nullptr) next()->set_owner(prev);
+  if (prev != nullptr)
+    prev->set_select_lex(next());
+  if (next() != nullptr)
+    next()->set_owner(prev);
 }
 
 void Select_lex_unit::unlink() {
-  if (prev != nullptr) prev->set_select_lex_unit(next());
-  if (next() != nullptr) next()->set_owner(prev);
+  if (prev != nullptr)
+    prev->set_select_lex_unit(next());
+  if (next() != nullptr)
+    next()->set_owner(prev);
 }
 
-
-int main()
-{
-//  foo(std::make_unique<const char[100]>());
+int main() {
+  //  foo(std::make_unique<const char[100]>());
   Select_lex a{"a"}, b{"b"}, c{"c"};
   b.set_select_lex(&c);
   a.set_select_lex(&b);
 
   Select_lex_unit slu_a{"slu_a"};
   slu_a.set_select_lex(&a);
-  
-  slu_a.print(); cout << endl;
+
+  slu_a.print();
+  cout << endl;
   b.unlink();
   slu_a.print();
 

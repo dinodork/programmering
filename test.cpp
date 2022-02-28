@@ -1,3 +1,1 @@
-template <class T> class A {
-
-};
+template <class T> class A {};

@@ -1,7 +1,8 @@
 /*
   Build:
 
-`icu-config --cxx --cxxflags --cppflags` icu_ub.cpp `icu-config --ldflags` -o icu_ub -g
+`icu-config --cxx --cxxflags --cppflags` icu_ub.cpp `icu-config --ldflags` -o
+icu_ub -g
 */
 
 #include "unicode/udata.h"
@@ -19,7 +20,7 @@ int main() {
 
   const UChar pattern[] = {'a'};
   URegularExpression *ure =
-    uregex_open(pattern, sizeof(pattern) / sizeof(UChar), 0, &upe, &status);
+      uregex_open(pattern, sizeof(pattern) / sizeof(UChar), 0, &upe, &status);
   assert(status == U_ZERO_ERROR);
 
   const UChar subject[] = {'a'};
@@ -37,7 +38,8 @@ int main() {
   UChar result[3];
   UChar *result_ptr = result;
   int capacity = sizeof(result);
-  uregex_appendReplacement(ure, replacement, sizeof(replacement) / sizeof(UChar), &result_ptr,
+  uregex_appendReplacement(ure, replacement,
+                           sizeof(replacement) / sizeof(UChar), &result_ptr,
                            &capacity, &status);
 
   assert(status == U_REGEX_INVALID_CAPTURE_GROUP_NAME);

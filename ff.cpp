@@ -1,14 +1,13 @@
-#include <iostream>
 #include <bitset>
-#include <string>
-#include <vector>
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <string>
+#include <vector>
 
 using std::cout;
 using std::endl;
-
 
 class THD {};
 class PT_item_list;
@@ -16,27 +15,23 @@ class POS {};
 class Item {};
 class LEX_STRING {};
 
-class Item_func_abs : public Item
-{
+class Item_func_abs : public Item {
 public:
   Item_func_abs(POS pos, PT_item_list *args) {}
 };
 
-template<typename Function_class, uint Min_argc, uint Max_argc= Min_argc>
-class Instantiator
-{
+template <typename Function_class, uint Min_argc, uint Max_argc = Min_argc>
+class Instantiator {
 public:
-  static const uint Min_argcount= Min_argc;
-  static const uint Max_argcount= Max_argc;
+  static const uint Min_argcount = Min_argc;
+  static const uint Max_argcount = Max_argc;
 
-  Item *instantiate(THD *thd, PT_item_list *args)
-  {
+  Item *instantiate(THD *thd, PT_item_list *args) {
     return new /* (thd->mem_root) */ Function_class(POS(), args);
   }
 };
 
-class Create_func
-{
+class Create_func {
 public:
   /**
     The builder create method.
@@ -59,40 +54,33 @@ public:
     @param item_list The list of arguments to the function, can be NULL
     @return An item representing the parsed function call, or NULL
   */
-  virtual Item *create_func(THD *thd, LEX_STRING name, PT_item_list *item_list)
-    = 0;
-
+  virtual Item *create_func(THD *thd, LEX_STRING name,
+                            PT_item_list *item_list) = 0;
 };
 
-uint arglist_length(const PT_item_list *args)
-{
+uint arglist_length(const PT_item_list *args) {
   if (args == nullptr)
     return 0;
   return 1;
 }
 
 bool check_argcount_bounds(THD *thd, LEX_STRING function_name,
-                           PT_item_list *item_list,
-                           uint min_argcount,
-                           uint max_argcount)
-{
-  uint argcount= arglist_length(item_list);
-  if (argcount < min_argcount || argcount > max_argcount)
-  {
-//    my_error(ER_WRONG_PARAMCOUNT_TO_NATIVE_FCT, MYF(0), function_name.str);
+                           PT_item_list *item_list, uint min_argcount,
+                           uint max_argcount) {
+  uint argcount = arglist_length(item_list);
+  if (argcount < min_argcount || argcount > max_argcount) {
+    //    my_error(ER_WRONG_PARAMCOUNT_TO_NATIVE_FCT, MYF(0),
+    //    function_name.str);
     return true;
   }
   return false;
 }
 
-template<typename Instantiator_fn>
-class Function_factory : public Create_func
-{
+template <typename Instantiator_fn>
+class Function_factory : public Create_func {
 public:
-
-  Item *create_func(THD *thd, LEX_STRING function_name, PT_item_list *item_list)
-    override
-  {
+  Item *create_func(THD *thd, LEX_STRING function_name,
+                    PT_item_list *item_list) override {
     if (check_argcount_bounds(thd, function_name, item_list,
                               m_instantiator.Min_argcount,
                               m_instantiator.Max_argcount))
@@ -101,22 +89,16 @@ public:
   }
 
 private:
-//  Function_factory() {}
+  //  Function_factory() {}
   Instantiator_fn m_instantiator;
 };
 
-Function_factory<Item_func_abs>
-s_singleton;
-
+Function_factory<Item_func_abs> s_singleton;
 
 #define SQL_FN(F, N) &Function_factory<Instantiator<F, N>>::s_singleton
 
-static constexpr std::pair<const char *, Create_func *> func_array[]=
-{
-  { "ABS", SQL_FN(Item_func_abs, 1) },
+static constexpr std::pair<const char *, Create_func *> func_array[] = {
+    {"ABS", SQL_FN(Item_func_abs, 1)},
 };
 
-int main()
-{
-  cout << "Hej hopp" << endl;
-}
+int main() { cout << "Hej hopp" << endl; }

@@ -1,11 +1,10 @@
-#include <iostream>
 #include <bitset>
+#include <iostream>
 #include <string>
 #include <vector>
 
 using std::cout;
 using std::endl;
-
 
 /*
 class Complex {
@@ -47,15 +46,12 @@ public:
 */
 class Complex {
 public:
-  constexpr Complex() : Complex(0,0) {}
+  constexpr Complex() : Complex(0, 0) {}
   constexpr Complex(double real) : Complex(real, 0) {}
   constexpr Complex(double real, double img) : r(real), i(img) {}
+
 private:
   const double r, i;
 };
 
-
-int main()
-{
-  Complex c;
-}
+int main() { Complex c; }

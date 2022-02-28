@@ -1,10 +1,10 @@
-#include <iostream>
 #include <bitset>
-#include <string>
-#include <vector>
+#include <iostream>
 #include <locale>
-#include <unordered_map>
+#include <string>
 #include <typeinfo>
+#include <unordered_map>
+#include <vector>
 
 using std::cout;
 using std::endl;
@@ -14,30 +14,32 @@ public:
   const char *m_name;
   ItrBase(const char *name = "anonymous") : m_name(name) {}
 
-  virtual void  operator ++ () { cout << "ItrBase::++" ; }
-  virtual const char * operator * () const { cout << "ItrBase::* : "; return m_name; }
+  virtual void operator++() { cout << "ItrBase::++"; }
+  virtual const char *operator*() const {
+    cout << "ItrBase::* : ";
+    return m_name;
+  }
 
 protected:
-  virtual bool equal(const ItrBase& o) const { return true; }
+  virtual bool equal(const ItrBase &o) const { return true; }
 };
-
 
 class ItrDesc : public ItrBase {
 public:
-  
   ItrDesc() = default;
   ItrDesc(const char *name) : ItrBase(name) {}
-  const char * operator * () const override { cout << "ItrBase::* : "; return m_name; }
-  void operator++() override { cout << "ItrDesc::++" ; }
+  const char *operator*() const override {
+    cout << "ItrBase::* : ";
+    return m_name;
+  }
+  void operator++() override { cout << "ItrDesc::++"; }
 };
 
-
-int main()
-{
+int main() {
   std::cout << "hello " << std::endl;
 
-  ItrDesc barr[2] = { "foo", "fie" };
-  ItrBase * ibp = barr;
+  ItrDesc barr[2] = {"foo", "fie"};
+  ItrBase *ibp = barr;
 
   {
     cout << "Calling ++ on a sliced copy { ";
@@ -54,5 +56,4 @@ int main()
   cout << "Calling ++ on a dereferenced pointer { ";
   ++(*ibp);
   cout << " }" << endl;
-
 }

@@ -1,6 +1,6 @@
 #ifdef __cplusplus
-#include <iostream>
 #include <bitset>
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -16,8 +16,8 @@ extern "C" {
 
 enum enum_field_types
 #if defined(__cplusplus) && __cplusplus > 201103L
-// N2764: Forward enum declarations, added in C++11
-: uint8_t
+    // N2764: Forward enum declarations, added in C++11
+    : uint8_t
 #endif /* __cplusplus */
 { MYSQL_TYPE_DECIMAL,
   MYSQL_TYPE_TINY,
@@ -53,11 +53,10 @@ enum enum_field_types
   MYSQL_TYPE_GEOMETRY = 255 };
 
 #ifdef __cplusplus
-}  // extern "C"
+} // extern "C"
 #else
 typedef enum enum_field_types enum_field_types;
 #endif /* __cplusplus */
-
 
 struct Item {
 #ifdef __cplusplus
@@ -65,13 +64,13 @@ struct Item {
 #else
   unsigned char
 #endif
-  a,b,c;
+      a,
+      b, c;
 
   enum_field_types m_type;
 };
 
-int main()
-{
+int main() {
   struct Item item;
   printf("Size of a %lu\n", sizeof item.a);
   printf("Size of m_type %lu\n", sizeof item.m_type);

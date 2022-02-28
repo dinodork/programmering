@@ -1,5 +1,5 @@
-#include <iostream>
 #include <functional>
+#include <iostream>
 
 using std::cout;
 using std::endl;
@@ -8,8 +8,7 @@ struct Sture {
   int i;
 };
 
-template<typename T>
-int foo(T && t) {
+template <typename T> int foo(T &&t) {
   cout << "foo: " << t.i << endl;
   t.i = 3;
   cout << "foo: " << t.i << endl;

@@ -18,8 +18,7 @@ public:
   ProductB(int a, int b) { cout << "ProductB::ProductB" << endl; }
 };
 
-template<typename T, typename ...Args>
-auto make(Args ...args) {
+template <typename T, typename... Args> auto make(Args... args) {
   return new T(args...);
 }
 

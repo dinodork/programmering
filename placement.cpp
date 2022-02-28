@@ -1,10 +1,10 @@
 #include <cstddef>
 #include <iostream>
-#include <vector>
-#include <string.h>
+#include <limits>
 #include <stdio.h>
 #include <stdlib.h>
-#include <limits>
+#include <string.h>
+#include <vector>
 
 using std::cout;
 using std::endl;
@@ -28,8 +28,7 @@ void foo() {
   cout << "foo" << endl;
 }
 
-int main()
-{
+int main() {
   int a = 1;
   int b = 2;
   int c = 3;

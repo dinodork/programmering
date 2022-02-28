@@ -3,63 +3,56 @@
 using std::cout;
 using std::endl;
 
-template<typename V>
-class Visitable {
+template <typename V> class Visitable {
 public:
-  virtual void accept( V &v ) = 0;
+  virtual void accept(V &v) = 0;
 };
 
-template<typename ... Vs>
-class INode : public Vs ... {
-};
+template <typename... Vs> class INode : public Vs... {};
 
-template<typename ... Vs>
-class Leaf : public INode<Vs ...> { 
+template <typename... Vs> class Leaf : public INode<Vs...> {
 public:
-  explicit Leaf( const char *label ) : m_label( label ) {}
+  explicit Leaf(const char *label) : m_label(label) {}
 
   using Vs::accept...;
 
   const char *m_label;
 };
 
-template<typename ... Vs>
-class Parent : public INode<Vs ...> {
+template <typename... Vs> class Parent : public INode<Vs...> {
 
 public:
-  using NodeType = INode<Vs ...>;
-  Parent(NodeType & lhs_arg, NodeType & rhs_arg)
-    : m_lhs(lhs_arg), m_rhs(rhs_arg)
-  {}
+  using NodeType = INode<Vs...>;
+  Parent(NodeType &lhs_arg, NodeType &rhs_arg)
+      : m_lhs(lhs_arg), m_rhs(rhs_arg) {}
 
-  NodeType & m_lhs, m_rhs;
+  NodeType &m_lhs, m_rhs;
 };
 
-// class PrintingVisitor : public IVisitor { 
+// class PrintingVisitor : public IVisitor {
 // public:
 //   void visit( Parent &plus ) { cout << " + "; }
 //   void visit( Leaf &n ) { cout << n.m_label; }
 // };
 
-class TemplatedPrintingVisitor { 
+class TemplatedPrintingVisitor {
 public:
   using This = TemplatedPrintingVisitor;
-  void visit( Parent<This> &plus ) { cout << " + "; }
-  void visit( Leaf<This> &n ) { cout << n.m_label; }
+  void visit(Parent<This> &plus) { cout << " + "; }
+  void visit(Leaf<This> &n) { cout << n.m_label; }
 };
 
-
-class TemplatedNicePrintingVisitor { 
+class TemplatedNicePrintingVisitor {
 public:
   using This = TemplatedPrintingVisitor;
-  void visit( Parent<This> &plus ) { cout << " * "; }
-  void visit( Leaf<This> &n ) { cout << n.m_label; }
+  void visit(Parent<This> &plus) { cout << " * "; }
+  void visit(Leaf<This> &n) { cout << n.m_label; }
 };
 
 int main() {
 
   Leaf<TemplatedPrintingVisitor> a("A"), b("B");
-//  Parent<TemplatedPrintingVisitor> p(a, b);
+  //  Parent<TemplatedPrintingVisitor> p(a, b);
 
   TemplatedPrintingVisitor tpv;
 

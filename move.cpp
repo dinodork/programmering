@@ -22,8 +22,14 @@ void fie(A &&a) {
   fum(a);
 }
 
-void fum(A &&a) { cout << "fum(A&&)" << endl; a.member = 666; }
-void fum(A &a) { cout << "fum(A&)" << endl; a.member = 666; }
+void fum(A &&a) {
+  cout << "fum(A&&)" << endl;
+  a.member = 666;
+}
+void fum(A &a) {
+  cout << "fum(A&)" << endl;
+  a.member = 666;
+}
 
 int main() {
   cout << "With copy semantics:" << endl;

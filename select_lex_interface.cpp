@@ -1,7 +1,7 @@
 #include <iostream>
-#include <vector>
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
+#include <vector>
 
 #include <memory>
 
@@ -24,7 +24,6 @@ public:
 
 class Select_lex final : public Select_lex_unit_owner, public Select_lex_owner {
 public:
-
   // Select_lex_unit_owner
   void set_select_lex_unit(Select_lex_unit *new_slu) override final;
   Select_lex_unit *select_lex_unit() const override final { return inner; }
@@ -32,7 +31,7 @@ public:
   // Select_lex_owner
   void set_select_lex(Select_lex *new_slu);
   Select_lex *select_lex() const { return m_next; }
-  
+
   Select_lex(std::string name) : m_name(name) {}
   Select_lex *next() { return select_lex(); }
   void set_owner(Select_lex_owner *new_owner) { prev = new_owner; }
@@ -43,6 +42,7 @@ public:
       cout << sl->m_name << ' ';
     cout << "]";
   }
+
 private:
   std::string m_name;
   Select_lex_owner *prev{nullptr};
@@ -52,7 +52,6 @@ private:
 
 class Select_lex_unit : public Select_lex_owner, public Select_lex_unit_owner {
 public:
-
   // Select_lex_owner
   void set_select_lex(Select_lex *new_slu);
   Select_lex *select_lex() const { return inner; }
@@ -74,7 +73,8 @@ public:
     }
     cout << "}";
   }
-private:  
+
+private:
   std::string m_name;
   Select_lex_unit_owner *prev{nullptr};
   Select_lex *inner{nullptr};
@@ -102,27 +102,30 @@ void Select_lex::set_select_lex(Select_lex *new_slu) {
 }
 
 void Select_lex::unlink() {
-  if (prev != nullptr) prev->set_select_lex(next());
-  if (next() != nullptr) next()->set_owner(prev);
+  if (prev != nullptr)
+    prev->set_select_lex(next());
+  if (next() != nullptr)
+    next()->set_owner(prev);
 }
 
 void Select_lex_unit::unlink() {
-  if (prev != nullptr) prev->set_select_lex_unit(next());
-  if (next() != nullptr) next()->set_owner(prev);
+  if (prev != nullptr)
+    prev->set_select_lex_unit(next());
+  if (next() != nullptr)
+    next()->set_owner(prev);
 }
 
-
-int main()
-{
-//  foo(std::make_unique<const char[100]>());
+int main() {
+  //  foo(std::make_unique<const char[100]>());
   Select_lex a{"a"}, b{"b"}, c{"c"};
   b.set_select_lex(&c);
   a.set_select_lex(&b);
 
   Select_lex_unit slu_a{"slu_a"};
   slu_a.set_select_lex(&a);
-  
-  slu_a.print(); cout << endl;
+
+  slu_a.print();
+  cout << endl;
   b.unlink();
   slu_a.print();
 

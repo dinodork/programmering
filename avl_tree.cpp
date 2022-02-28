@@ -55,29 +55,29 @@ private:
       return (*node)->insert(t, parentPtr);
   }
 
-/**
-                               _ nodePrintWidth
-                              | |
-                              v v
-                               O
-                             /   \
-                            o     o
-                           / \   / \
-                          o   o o   o
-                        | |     ^---^
-                        | |       nodeSpacing
-                        ^-^
-                         node padding
-                        ^-------------^
-                            screenWidth
+  /**
+                                 _ nodePrintWidth
+                                | |
+                                v v
+                                 O
+                               /   \
+                              o     o
+                             / \   / \
+                            o   o o   o
+                          | |     ^---^
+                          | |       nodeSpacing
+                          ^-^
+                           node padding
+                          ^-------------^
+                              screenWidth
 
-  We calculate the node padding as follows:
-  - On the deepest level, the node padding is 0
+    We calculate the node padding as follows:
+    - On the deepest level, the node padding is 0
 
-  - On all other levels, we want the leftmost node centered between its two
-    children. Hence the node padding is half the node spacing on the level
-    below.
-*/
+    - On all other levels, we want the leftmost node centered between its two
+      children. Hence the node padding is half the node spacing on the level
+      below.
+  */
   void print(std::vector<Node *> *queue, int currentDepth, int totalDepth) {
     if (queue->empty()) {
       cout << "queue empty" << endl;
