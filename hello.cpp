@@ -4,4 +4,4 @@
 using std::cout;
 using std::endl;
 
-int main() { cout << "Hello world %d!" << NDEBUG << endl; }
+int main() { cout << "Hello world!" << endl; }
