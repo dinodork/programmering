@@ -26,6 +26,7 @@ kt_jvm_binary(
         "Command.kt",
         "CommandRouter.kt",
         "CommandRouterFactory.kt",
+        "HelloWorldCommand.kt",
         "Main.kt",
     ],
     main_class = "MainKt",
