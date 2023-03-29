@@ -1,4 +1,6 @@
-class CommandRouter {
+import javax.inject.Inject
+
+class CommandRouter @Inject constructor() {
     val commands = mapOf<String, Command>()
 
     fun route(input: String): Command.Result {

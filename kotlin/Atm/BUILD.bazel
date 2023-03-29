@@ -1,5 +1,13 @@
 load("@io_bazel_rules_kotlin//kotlin:kotlin.bzl", "kt_jvm_binary")
 
+java_plugin(
+    name = "dagger_plugin",
+    processor_class = "dagger.internal.codegen.ComponentProcessor",
+    deps = [
+        "@maven//:com_google_dagger_dagger_compiler",
+    ],
+)
+
 java_library(
     name = "dagger",
     exported_plugins = [":dagger_plugin"],
@@ -14,8 +22,10 @@ java_library(
 kt_jvm_binary(
     name = "atm",
     srcs = [
+        "Atm.kt",
         "Command.kt",
         "CommandRouter.kt",
+        "CommandRouterFactory.kt",
         "Main.kt",
     ],
     main_class = "MainKt",
@@ -23,4 +33,5 @@ kt_jvm_binary(
         "//java/fr/enoent/phosphorus:__subpackages__",
         "//javatests/fr/enoent/phosphorus:__subpackages__",
     ],
+    deps = ["dagger"],
 )
