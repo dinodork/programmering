@@ -1,0 +1,26 @@
+load("@io_bazel_rules_kotlin//kotlin:kotlin.bzl", "kt_jvm_binary")
+
+java_library(
+    name = "dagger",
+    exported_plugins = [":dagger_plugin"],
+    visibility = ["//visibility:public"],
+    exports = [
+        "@maven//:com_google_dagger_dagger",
+        "@maven//:com_google_dagger_dagger_compiler",
+        "@maven//:javax_inject_javax_inject",
+    ],
+)
+
+kt_jvm_binary(
+    name = "atm",
+    srcs = [
+        "Command.kt",
+        "CommandRouter.kt",
+        "Main.kt",
+    ],
+    main_class = "MainKt",
+    visibility = [
+        "//java/fr/enoent/phosphorus:__subpackages__",
+        "//javatests/fr/enoent/phosphorus:__subpackages__",
+    ],
+)

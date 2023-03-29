@@ -1,0 +1,18 @@
+java_plugin(
+    name = "dagger_plugin",
+    processor_class = "dagger.internal.codegen.ComponentProcessor",
+    deps = [
+        "@maven//:com_google_dagger_dagger_compiler",
+    ],
+)
+
+java_library(
+    name = "dagger",
+    exported_plugins = [":dagger_plugin"],
+    visibility = ["//visibility:public"],
+    exports = [
+        "@maven//:com_google_dagger_dagger",
+        "@maven//:com_google_dagger_dagger_compiler",
+        "@maven//:javax_inject_javax_inject",
+    ],
+)
