@@ -22,7 +22,8 @@ vector<int> bfs(int n, int m, vector<vector<int>> edges, int s) {
   struct Node {
     int id;
     int cost;
-    vector<Node *> children;
+    vector<Node *> adjacent; // Two-way link
+    bool visited{false};
 
     Node() = default;
     Node(int ida) : id(ida), cost(-1) {}
@@ -40,15 +41,19 @@ vector<int> bfs(int n, int m, vector<vector<int>> edges, int s) {
     new (allNodes + i) Node(i + 1);
 
   // Build graph
-  for (const auto &edge : edges)
-    allNodes[edge[0] - 1].children.push_back(allNodes + edge[1] - 1);
+  for (const auto &edge : edges) {
+    auto edgeStart = allNodes + edge[0] - 1;
+    auto edgeEnd = allNodes + edge[1] - 1;
+    edgeStart->adjacent.push_back(edgeEnd);
+    edgeEnd->adjacent.push_back(edgeStart);
+  }
 
   cout << "All nodes:\n";
   for (int i = 0; i < n; ++i) {
     Node &node = allNodes[i];
-    cout << "Node( id=" << node.id << " children={ ";
-    for (auto child : node.children)
-      cout << child - allNodes + 1 << " ";
+    cout << "Node( id=" << node.id << " adjacent={ ";
+    for (auto node : node.adjacent)
+      cout << node - allNodes + 1 << " ";
     cout << "} )\n";
   }
   cout << "\n";
@@ -71,12 +76,16 @@ vector<int> bfs(int n, int m, vector<vector<int>> edges, int s) {
 
     } else {
       auto node = get<Node *>(elem);
-      cout << "Popped node " << node->id << "\n";
+      if (!node->visited) {
+        node->visited = true;
+        cout << "Popped node " << node->id << "\n";
 
-      node->cost = currentCost;
-      for (auto child : node->children) {
-        cout << "q'ing #" << child - allNodes << " : " << child->id << "\n";
-        q.push_back(child);
+        node->cost = currentCost;
+        for (auto adjacentNode : node->adjacent) {
+          cout << "q'ing #" << adjacentNode - allNodes << " : " << node->id
+               << "\n";
+          q.push_back(adjacentNode);
+        }
       }
     }
   }
