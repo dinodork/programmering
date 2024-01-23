@@ -47,3 +47,14 @@ TEST_CASE("Building the heap", "[buildHeap]") {
     REQUIRE(v == vector({3, 2, 1, 4, 5}));
   }
 }
+
+
+TEST_CASE("Extract the max", "[extractMax]") {
+  {
+    vector<int> v = {3, 2, 1};
+    Heap heap(v);
+    REQUIRE(heap.size() == 3);
+    REQUIRE(heap.extractMax() == 3);
+    REQUIRE(heap.size() == 2);
+  }
+}
