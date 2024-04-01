@@ -1,36 +1,39 @@
+#include "mdspan.hpp"
+#include "zx_colors.hpp"
+#include "zx_graphics.hpp"
+#include <cassert>
 #include <fstream>
 #include <iostream>
+#include <span>
 #include <string>
 #include <vector>
 
-using Byte = uint8_t;
-
-const Byte INK_BLACK = 0b00000000;
-const Byte INK_BLUE = 0b00000001;
-const Byte INK_RED = 0b00000010;
-const Byte INK_MAGENTA = 0b00000011;
-const Byte INK_GREEN = 0b00000100;
-const Byte INK_CYAN = 0b00000101;
-const Byte INK_YELLOW = 0b00000110;
-const Byte INK_WHITE = 0b00000111;
-
-const Byte PAPER_BLACK = 0b00000000;
-const Byte PAPER_BLUE = 0b00001000;
-const Byte PAPER_RED = 0b00010000;
-const Byte PAPER_MAGENTA = 0b00011000;
-const Byte PAPER_GREEN = 0b00100000;
-const Byte PAPER_CYAN = 0b00101000;
-const Byte PAPER_YELLOW = 0b00110000;
-const Byte PAPER_WHITE = 0b00111000;
-
-const Byte BRIGHT = 0b01000000;
-const Byte FLASH = 0b10000000;
-
 using namespace std;
+using namespace Kokkos;
 
 using Bitmap_mem = uint8_t[32 * 24 * 8];
 using Attr_mem = uint8_t[24][32];
 using Character = uint8_t[8];
+
+Byte gradient[] = {
+    0,          //
+    0,          //
+    0b10101010, //
+    0,          //
+    0,          //
+    0b01010101, //
+    0,          //
+    0b01010101, //
+    //
+    0b10101010, //
+    0b01010101, //
+    0b10101010, //
+    0b11111111, //
+    0b10101010, //
+    0b11111111, //
+    0b10101010, //
+    0b11111111, //
+};
 
 Character char_a = {
     0b00000000, //
@@ -43,13 +46,7 @@ Character char_a = {
     0b00000000,
 };
 
-/*
-  How to translate the screen memory address:
-
-  Byte         15|14|13|12|11|10| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0
-               --+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--
-  Co-ordinate   0| 0| 0|Y7|Y6|Y2|Y1|Y0|Y5|Y4|Y3|X4|X3|X2|X1|X0
-*/
+uint8_t font[767];
 
 constexpr uint16_t get_byte_address(size_t x_byte, size_t y_pixel) {
   uint16_t byte_offset = x_byte;
@@ -59,23 +56,22 @@ constexpr uint16_t get_byte_address(size_t x_byte, size_t y_pixel) {
   return byte_offset;
 }
 
-void plot(size_t x, size_t y, Bitmap_mem &mem) {
-  auto address = get_byte_address(x >> 3, y);
-  mem[address] |= 0x80 >> (x & 7);
+void plot(BitmapMemMDSpan &mdmem, size_t x, size_t y, Bitmap_mem &mem) {
+  mdmem(x >> 3, y) |= 0x80 >> (x & 7);
 }
 
-void draw(size_t x_start, size_t y_start, size_t x_end, size_t y_end,
-          Bitmap_mem &mem) {
+void draw(BitmapMemMDSpan &mdmem, size_t x_start, size_t y_start, size_t x_end,
+          size_t y_end, Bitmap_mem &mem) {
   if (x_end == x_start)
     for (auto y = y_start; y < y_end; ++y)
-      plot(x_start, y, mem);
+      plot(mdmem, x_start, y, mem);
   if (y_end == y_start)
     for (auto x = x_start; x < x_end; ++x)
-      plot(x, y_start, mem);
+      plot(mdmem, x, y_start, mem);
 }
 
-void writeLetterBig(const Character &c, size_t col, size_t row,
-                    Bitmap_mem &bitmap_mem, Attr_mem &attr_mem) {
+void writeLetterBig(BitmapMemMDSpan &mdmem, span<uint8_t, 8> c, size_t col,
+                    size_t row, Bitmap_mem &bitmap_mem, Attr_mem &attr_mem) {
 
   for (int i = 0; i < sizeof(c); ++i) {
     for (auto j = 0; j < 8; ++j) {
@@ -84,22 +80,22 @@ void writeLetterBig(const Character &c, size_t col, size_t row,
       auto mask = 0x80 >> j;
       uint16_t pixel_row = c[i] << j;
       if (pixel_row & 0x80) {
-        attr_mem[irow][icol] = BRIGHT | PAPER_MAGENTA;
+        attr_mem[irow][icol] = BRIGHT | PAPER_MAGENTA | (int)Ink::CYAN;
         if (i == 0 || !(c[i - 1] & mask)) { // nothing above
           auto x = icol * 8, y = irow * 8 - 1;
-          draw(x, y, x + 8, y, bitmap_mem);
+          draw(mdmem, x, y, x + 8, y, bitmap_mem);
         }
         if (!(pixel_row & 0x40)) { // nothing to the right
           auto x = (icol + 1) * 8, y = irow * 8;
-          draw(x, y, x, y + 8, bitmap_mem);
+          draw(mdmem, x, y, x, y + 8, bitmap_mem);
         }
         if (i == sizeof(c) || !(c[i + 1] & mask)) { // nothing below
           auto x = icol * 8, y = (irow + 1) * 8;
-          draw(x, y, x + 8, y, bitmap_mem);
+          draw(mdmem, x, y, x + 8, y, bitmap_mem);
         }
         if (!(pixel_row & 0x100)) { // nothing_to_the_left
           auto x = icol * 8 - 1, y = irow * 8;
-          draw(x, y, x, y + 8, bitmap_mem);
+          draw(mdmem, x, y, x, y + 8, bitmap_mem);
         }
       }
     }
@@ -107,11 +103,26 @@ void writeLetterBig(const Character &c, size_t col, size_t row,
 }
 
 int main() {
+
+  ifstream fontfile("font.dat", ios::in | ios::binary | ios::ate);
+  if (fontfile.is_open()) {
+    //    size = fontfile.tellg();
+    //    assert(size == 767);
+    fontfile.seekg(0, ios::beg);
+    fontfile.read((char *)font, sizeof(font));
+    fontfile.close();
+  } else {
+    cout << "Failed to open file" << endl;
+    return -1;
+  }
+
   ofstream myfile;
   myfile.open("bokstav.scr");
 
   Bitmap_mem bitmap_mem;
   Attr_mem attr_mem;
+
+  auto bitmap_mem_mdspan = BitmapMemMDSpan(bitmap_mem);
 
   for (auto &b : bitmap_mem)
     b = 0x00;
@@ -120,7 +131,13 @@ int main() {
     for (auto &col : row)
       col = BRIGHT | PAPER_BLACK | INK_WHITE;
 
-  writeLetterBig(char_a, 10, 10, bitmap_mem, attr_mem);
+  string s = "bajs";
+  int col = 0;
+  for (auto c : s) {
+    auto character = span<uint8_t, 8>(font + (c - 32) * 8, 8);
+    writeLetterBig(bitmap_mem_mdspan, character, col, 10, bitmap_mem, attr_mem);
+    col += 6;
+  }
 
   // Write to file
   for (auto b : bitmap_mem)
